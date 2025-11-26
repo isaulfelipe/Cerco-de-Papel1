@@ -1,6 +1,6 @@
 Id,Raridade,Nome,Custo,Descrição,Classe,Dano Mínimo,Dano Máximo,Pontos de Vida,Movimento,Alcance
 "U001",COMMON,"Soldado",1,"",MELEE,1,4,3,2,1
-"U002",COMMON,"Arqueiro",1,"",ARCHER,1,4,1,2,3
+"U002",COMMON,"Arqueiro",1,"",ARCHER,1,3,1,2,3
 "U003",COMMON,"Mago",2,"",MAGE,2,5,1,1,4
 "U004",RARE,"Clérigo",2,"Não causa dano. Pode curar uma unidade próxima.",SUPPORT,2,4,2,3,2
 "U005",RARE,"Assassino",3,"Causa 2 a mais de dano se atingir um inimigo pelas costas.",MELEE,1,6,2,4,1
