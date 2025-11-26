@@ -1,9 +1,6 @@
 package br.edu.ufersa.ed1.cercoDePapel.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EmptyStackException;
-import java.util.Iterator;
+import java.util.*;
 
 public class MyStack<E> implements Iterable<E> {
     private MyLinkedList<E> list;
@@ -14,7 +11,7 @@ public class MyStack<E> implements Iterable<E> {
 
     // Método shuffle necessário para o Deck
     public void shuffle() {
-        ArrayList<E> temp = new ArrayList<>();
+        List<E> temp = new MyArrayList<>();
         for (E item : list) {
             temp.add(item);
         }

@@ -109,31 +109,86 @@ public class BattleManager {
         Card card = playerDeck.draw();
         if (card != null) {
             playerHand.add(card);
-            sortHandByCost();
+            mergeSortHandByCost();
         }
     }
 
-    // Usa o insertion sort para ordenar as cartas em ordem crescente de custo
-    public void sortHandByCost(){
-        if(playerHand == null || playerHand.size() <= 1) return;
-
-        Card[] handArray = playerHand.toArray(new Card[0]);
-
-        for (int i = 1; i < handArray.length; i++) {
-            Card key = handArray[i];
-            int j = i - 1;
-
-            // Move elementos maiores que a chave para a direita
-            while (j >= 0 && handArray[j].cost > key.cost) {
-                handArray[j + 1] = handArray[j];
-                j = j - 1;
-            }
-            handArray[j + 1] = key;
+    private void mergeSortHandByCost() {
+        if (playerHand == null || playerHand.size() <= 1) {
+            return;
         }
 
-        // Atualiza a lista
+        // Converte para array para aplicar Merge Sort
+        Card[] handArray = playerHand.toArray(new Card[0]);
+
+        // Aplica Merge Sort
+        mergeSort(handArray, 0, handArray.length - 1);
+
+        // Atualiza a lista ordenada
         playerHand.clear();
-        playerHand.addAll(Arrays.asList(handArray));
+        for (Card card : handArray) {
+            playerHand.add(card);
+        }
+    }
+
+    private void mergeSort(Card[] array, int left, int right) {
+        if (left < right) {
+            // Encontra o ponto médio
+            int mid = left + (right - left) / 2;
+
+            // Ordena primeira e segunda metades
+            mergeSort(array, left, mid);
+            mergeSort(array, mid + 1, right);
+
+            // Combina as metades ordenadas
+            merge(array, left, mid, right);
+        }
+    }
+
+    private void merge(Card[] array, int left, int mid, int right) {
+        // Tamanhos dos subarrays
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        // Arrays temporários
+        Card[] leftArray = new Card[n1];
+        Card[] rightArray = new Card[n2];
+
+        // Copia dados para arrays temporários
+        for (int i = 0; i < n1; i++) {
+            leftArray[i] = array[left + i];
+        }
+        for (int j = 0; j < n2; j++) {
+            rightArray[j] = array[mid + 1 + j];
+        }
+
+        // Combina os arrays temporários
+        int i = 0, j = 0, k = left;
+
+        while (i < n1 && j < n2) {
+            if (leftArray[i].cost <= rightArray[j].cost) {
+                array[k] = leftArray[i];
+                i++;
+            } else {
+                array[k] = rightArray[j];
+                j++;
+            }
+            k++;
+        }
+
+        // Copia elementos restantes do leftArray
+        while (i < n1) {
+            array[k] = leftArray[i];
+            i++;
+            k++;
+        }
+
+        // Copia elementos restantes do rightArray
+        while (j < n2) {
+            array[k] = rightArray[j];
+            j++;
+            k++;
+        }
     }
 
     private void checkWinCondition() {
@@ -267,7 +322,7 @@ public class BattleManager {
         if (success) {
             turnManager.spendMana(card.cost);
             playerHand.remove(card);
-            sortHandByCost();
+            mergeSortHandByCost();
             return true;
         }
         return false;
@@ -296,7 +351,7 @@ public class BattleManager {
             newUnit.setAttacked(true);
             addUnit(newUnit);
             playerHand.remove(card);
-            sortHandByCost();
+            mergeSortHandByCost();
             return true;
         }
         return false;

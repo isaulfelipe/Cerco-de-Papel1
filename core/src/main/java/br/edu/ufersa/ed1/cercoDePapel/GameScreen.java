@@ -1,5 +1,6 @@
 package br.edu.ufersa.ed1.cercoDePapel;
 
+import br.edu.ufersa.ed1.cercoDePapel.entities.SpellCard;
 import br.edu.ufersa.ed1.cercoDePapel.util.MyLinkedList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -240,6 +241,12 @@ public class GameScreen implements Screen {
         if (selectedCard != null) {
             if (selectedCard instanceof UnitCard) {
                 boolean success = battleManager.tryPlayUnitCard((UnitCard)selectedCard, x, y);
+                if (success) {
+                    selectedCard = null; // Sucesso, carta usada e removida da lista
+                }
+            }
+            else if (selectedCard instanceof SpellCard) {
+                boolean success = battleManager.tryPlaySpellCard((SpellCard) selectedCard, x, y);
                 if (success) {
                     selectedCard = null; // Sucesso, carta usada e removida da lista
                 }
