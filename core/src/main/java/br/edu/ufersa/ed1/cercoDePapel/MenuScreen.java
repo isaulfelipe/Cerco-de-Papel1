@@ -79,14 +79,13 @@ public class MenuScreen implements Screen {
     }
 
     private void createFonts() {
-        // Verifica se o arquivo existe. Se não existir, usa a padrão (granulada) para não travar.
-        if (Gdx.files.internal("roboto-black.ttf").exists()) {
-            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("roboto-black.ttf"));
+        // CORREÇÃO: Nome exato do arquivo (case sensitive)
+        if (Gdx.files.internal("Roboto-Black.ttf").exists()) {
+            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Roboto-Black.ttf"));
             FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
-            // Configurações para o Título (Tamanho 50px)
             parameter.size = 50;
-            parameter.borderWidth = 2; // Borda opcional para destacar
+            parameter.borderWidth = 2;
             parameter.borderColor = Color.DARK_GRAY;
             parameter.shadowOffsetX = 3;
             parameter.shadowOffsetY = 3;
@@ -94,20 +93,18 @@ public class MenuScreen implements Screen {
             parameter.magFilter = Texture.TextureFilter.Linear;
             fontTitle = generator.generateFont(parameter);
 
-            // Configurações para os Botões (Tamanho 24px)
             parameter.size = 24;
             parameter.borderWidth = 0;
             parameter.shadowOffsetX = 0;
             parameter.shadowOffsetY = 0;
             fontButton = generator.generateFont(parameter);
 
-            generator.dispose(); // Importante: limpar o gerador da memória
+            generator.dispose();
         } else {
-            // Fallback caso você esqueça de colocar o arquivo font.ttf
-            System.err.println("AVISO: 'roboto-black.ttf' não encontrado na pasta assets! Usando fonte padrão.");
+            System.err.println("AVISO: 'Roboto-Black.ttf' não encontrado na pasta assets! Usando fonte padrão.");
             fontTitle = new BitmapFont();
             fontTitle.getData().setScale(3);
-            fontTitle.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear); // Tenta suavizar um pouco
+            fontTitle.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
             fontButton = new BitmapFont();
             fontButton.getData().setScale(2);
