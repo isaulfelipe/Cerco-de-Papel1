@@ -1,0 +1,16 @@
+Id,Raridade,Nome,Custo,Descrição,Tipo de Magia
+"S001",COMMON,"Seta de Fogo",1,"Causa 2 de dano a uma unidade alvo.",DAMAGE
+"S002",COMMON,"Relâmpago",2,"Causa 3 de dano a uma unidade alvo.",DAMAGE
+"S003",RARE,"Bola de Fogo",3,"Causa 2 de dano em uma área de 3x3 espaços.",DAMAGE
+"S004",RARE,"Lança de Gelo",3,"Causa 2 de dano a uma unidade alvo e a unidade não pode se mover no próximo turno do oponente.",DEBUFF
+"S005",EPIC,"Explosão Arcana",4,"Causa 2 de dano a todas as unidades em campo.",DAMAGE
+"S006",COMMON,"Oração de Cura",1,"Cura 3 de vida de uma unidade aliada.",HEAL
+"S007",COMMON,"Benção",1,"Aumenta o dano causado por uma unidade aliada em +2 por um turno.",BUFF
+"S008",RARE,"Armadura Arcana",2,"Concede +3 de Vida máxima e cura 3 de vida de uma unidade aliada.",BUFF
+"S009",RARE,"Sede de Batalha",2,"Concede +1 de Ataque e Movimento a uma unidade aliada.",BUFF
+"S010",EPIC,"Poção de Crescimento",3,"Concede +2 de Ataque e HP a uma unidade aliada.",BUFF
+"S011",COMMON,"Congelamento Profundo",2,"A unidade alvo não pode se mover ou atacar no próximo turno do oponente",DEBUFF
+"S012",COMMON,"Enfraquecer",2,"Reduz o ataque de uma unidade inimiga em -2 (mínimo 0).",DEBUFF
+"S013",COMMON,"Rajada de Vento",2,"Empurra uma unidade alvo 2 casas para longe de você. Se colidir com outra unidade, ambas sofrem 1 de dano.",CONTROL
+"S014",EPIC,"Teleporte Tático",3,"Move uma unidade aliada alvo para qualquer casa vazia no tabuleiro.",CONTROL
+"S015",COMMON,"Folhear Grimório",2,"Compre os 2 primeiros feitiços do seu deck.",UTILITY

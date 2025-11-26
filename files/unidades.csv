@@ -1,0 +1,16 @@
+Id,Raridade,Nome,Custo,Descrição,Classe,Dano Mínimo,Dano Máximo,Pontos de Vida,Movimento,Alcance
+"U001",COMMON,"Soldado",1,"",MELEE,1,4,3,2,1
+"U002",COMMON,"Arqueiro",1,"",ARCHER,1,4,1,2,3
+"U003",COMMON,"Mago",2,"",MAGE,2,5,1,1,4
+"U004",RARE,"Clérigo",2,"Não causa dano. Pode curar uma unidade próxima.",SUPPORT,2,4,2,3,2
+"U005",RARE,"Assassino",3,"Causa 2 a mais de dano se atingir um inimigo pelas costas.",MELEE,1,6,2,4,1
+"U006",RARE,Cavaleiro,3,"",MELEE,3,5,5,4,1
+"U007",LEGENDARY,"Arquimago",5,"Lança um raio que perfura todos os alvos em uma linha.",MAGE,3,8,2,2,6
+"U008",EPIC,"Paladino",5,"Quando aliados adjacentes são atacados, essa unidade leva dano ao invés.",TANK,2,5,6,2,1
+"U009",COMMON,"Esqueleto",2,"Revive uma vez após ser derrotado.",MELEE,1,4,2,1,1
+"U010",COMMON,"Goblin",1,"",ARCHER,1,5,1,3,3
+"U011",EPIC,"Ogro",5,"Ao atacar um inimigo, causa metade do dano para unidades adjacentes.",MELEE,3,6,4,1,1
+"U012",EPIC,"Golem de Ferro",5,"Dano recebido de unidades não-mágicas é reduzido pela metade.",TANK,2,5,6,1,1
+"U013",LEGENDARY,"Dragão Vermelho",7,"Ignora obstáculos ao se mover. Ao atacar, causa dano ao alvo e todas as unidades adjacentes. O ataque possui um cooldown de 1 turno.",MAGE,6,10,9,3,4
+"U014",COMMON,"Rato Gigante",2,"O ataque envenena o alvo, causando 1-2 de dano a cada turno.",MELEE,1,3,2,2,1
+"U015",RARE,"Slime",3,"Metade do dano que essa unidade sofrer é refletida de volta para o alvo.",TANK,1,2,8,1,1
