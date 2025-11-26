@@ -83,7 +83,7 @@ public class GameScreen implements Screen {
     private Image deckImage;
 
     // Configuração visual das cartas na mão
-    private final float CARD_WIDTH = 200;
+    private final float CARD_WIDTH = 280;
     private final float CARD_HEIGHT = 280;
     private final float HAND_Y = 35;
 
@@ -131,11 +131,10 @@ public class GameScreen implements Screen {
             if (!allUnits.isEmpty()) {
                 // Adiciona um inimigo para testar (Arqueiro)
                 UnitCard archer = allUnits.stream().filter(u -> u.name.equals("Arqueiro")).findFirst().orElse(allUnits.iterator().next());
-                battleManager.addUnit(new BoardUnit(archer, 7, 3, false));
+                battleManager.addUnit(new BoardUnit(archer, 8, 3, false));
 
                 UnitCard soldier = allUnits.stream().filter(u -> u.name.equals("Soldado")).findFirst().orElse(allUnits.iterator().next());
-                battleManager.addUnit(new BoardUnit(soldier, 6, 4, false));
-                battleManager.addUnit(new BoardUnit(soldier, 6, 2, false));
+                battleManager.addUnit(new BoardUnit(soldier, 7, 4, false));
             }
         } catch (Exception e) { e.printStackTrace(); }
 
@@ -401,12 +400,12 @@ public class GameScreen implements Screen {
 
             // Desenha textos da carta
             batch.setColor(Color.BLACK);
-            cardFont.draw(batch, c.name, cardX + 10, cardY + CARD_HEIGHT - 20);
+            cardFont.draw(batch, c.name, cardX + 63, cardY + CARD_HEIGHT - 13);
 
             if (battleManager.getTurnManager().getCurrentMana() >= c.cost) cardFont.setColor(0, 0, 0.8f, 1);
             else cardFont.setColor(0.8f, 0, 0, 1);
 
-            cardFont.draw(batch, "Mana: " + c.cost, cardX + 10, cardY + CARD_HEIGHT - 60);
+            cardFont.draw(batch, "Mana: " + c.cost, cardX + 63, cardY + CARD_HEIGHT - 60);
             cardFont.setColor(Color.BLACK);
         }
         batch.end();

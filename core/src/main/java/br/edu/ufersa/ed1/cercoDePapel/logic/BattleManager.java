@@ -30,7 +30,7 @@ public class BattleManager {
     // Deck e Mão
     private Deck playerDeck;
     private List<Card> playerHand;
-    private final int MAX_HAND_SIZE = 5;
+    private final int MAX_HAND_SIZE = 7;
 
     // Controle de habilidade em andamento
     private BoardUnit unitUsingAbility;
