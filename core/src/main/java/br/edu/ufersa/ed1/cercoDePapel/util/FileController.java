@@ -17,7 +17,7 @@ public class FileController {
     private static final String pathMap = "maps/testMap.tmx";
 
     public static Set<UnitCard> readAllUnits() throws IOException {
-        Set<UnitCard> unitSet = new LinkedHashSet<>();
+        Set<UnitCard> unitSet = new MyLinkedHashSet<>();
 
         // CORREÇÃO: Usando Gdx.files.internal para ler de dentro do assets/jar
         try (BufferedReader reader = new BufferedReader(Gdx.files.internal(pathUnits).reader())) {
@@ -65,7 +65,7 @@ public class FileController {
     }
 
     public static Set<SpellCard> readAllSpells() throws IOException {
-        Set<SpellCard> spellSet = new LinkedHashSet<>();
+        Set<SpellCard> spellSet = new MyLinkedHashSet<>();
 
         try (BufferedReader reader = new BufferedReader(Gdx.files.internal(pathSpells).reader())) {
             reader.readLine();
