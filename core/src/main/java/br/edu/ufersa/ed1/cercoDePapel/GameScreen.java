@@ -31,10 +31,15 @@ import br.edu.ufersa.ed1.cercoDePapel.entities.UnitCard;
 import br.edu.ufersa.ed1.cercoDePapel.logic.BattleManager;
 import br.edu.ufersa.ed1.cercoDePapel.util.FileController;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class GameScreen implements Screen {
     private final Main game;
+
+    private Map<String, Texture> unitTextures;
+    private Texture defaultUnitTexture;
 
     // --- DIMENSÕES VIRTUAIS ---
     private static final float VIRTUAL_WIDTH = 2000;
@@ -126,9 +131,20 @@ public class GameScreen implements Screen {
             if (!allUnits.isEmpty()) {
                 // Adiciona um inimigo para testar (Arqueiro)
                 UnitCard archer = allUnits.stream().filter(u -> u.name.equals("Arqueiro")).findFirst().orElse(allUnits.iterator().next());
-                battleManager.addUnit(new BoardUnit(archer, 6, 3, false));
+                battleManager.addUnit(new BoardUnit(archer, 7, 3, false));
+
+                UnitCard soldier = allUnits.stream().filter(u -> u.name.equals("Soldado")).findFirst().orElse(allUnits.iterator().next());
+                battleManager.addUnit(new BoardUnit(soldier, 6, 4, false));
+                battleManager.addUnit(new BoardUnit(soldier, 6, 2, false));
             }
         } catch (Exception e) { e.printStackTrace(); }
+
+        // Inicializa o mapa de texturas
+        unitTextures = new HashMap<>();
+        defaultUnitTexture = new Texture("objects/Character.png"); // Fallback
+
+        // Carrega os sprites das unidades
+        loadUnitSprites();
 
         // Cria textura de seleção (quadrado verde)
         Pixmap pix = new Pixmap(TILE_SIZE, TILE_SIZE, Pixmap.Format.RGBA8888);
@@ -201,6 +217,31 @@ public class GameScreen implements Screen {
                 return false;
             }
         });
+    }
+
+    private void loadUnitSprites() {
+        String[] unitNames = {
+            "Soldado", "Arqueiro", "Mago", "Clérigo", "Assassino",
+            "Cavaleiro", "Arquimago", "Paladino", "Esqueleto", "Goblin",
+            "Ogro", "Golem de Ferro", "Dragão Vermelho", "Rato Gigante", "Slime"
+        };
+
+        for (String unitName : unitNames) {
+            try {
+                String texturePath = "units/" + unitName + ".png";
+                if (Gdx.files.internal(texturePath).exists()) {
+                    Texture texture = new Texture(texturePath);
+                    unitTextures.put(unitName, texture);
+                    System.out.println("Sprite carregado: " + unitName);
+                } else {
+                    System.out.println("AVISO: Sprite não encontrado: " + texturePath);
+                }
+            } catch (Exception e) {
+                System.err.println("Erro ao carregar sprite para " + unitName + ": " + e.getMessage());
+            }
+        }
+
+        System.out.println("Total de sprites carregados: " + unitTextures.size());
     }
 
     // --- CLIQUE NA MÃO (USANDO LISTA ENCADEADA) ---
@@ -303,7 +344,13 @@ public class GameScreen implements Screen {
                 else if (!unit.isPlayer()) batch.setColor(1f, 0.5f, 0.5f, 1f);
                 else batch.setColor(Color.WHITE);
 
-                batch.draw(characterTexture, drawX, drawY, TILE_SIZE, TILE_SIZE);
+                // USA O SPRITE ESPECÍFICO DA UNIDADE COM ESPELHAMENTO PARA INIMIGOS
+                Texture unitTexture = getUnitTexture(unit);
+                boolean flipX = !unit.isPlayer(); // Espelha inimigos no eixo X
+
+                batch.draw(unitTexture, drawX, drawY, TILE_SIZE, TILE_SIZE,
+                    0, 0, 200, 200, flipX, false); // flipX=true para inimigos
+
                 batch.setColor(Color.WHITE);
                 font.draw(batch, unit.getCurrentHp() + "/" + unit.getCardData().hp, drawX + 10, drawY + 190);
 
@@ -312,11 +359,19 @@ public class GameScreen implements Screen {
                 }
             }
 
-            // Fantasma da invocação (Visual Aid)
             if (selectedCard != null) {
                 gameViewport.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-                batch.setColor(1, 1, 1, 0.5f);
-                batch.draw(characterTexture, touchPoint.x - TILE_SIZE/2, touchPoint.y - TILE_SIZE/2, TILE_SIZE, TILE_SIZE);
+
+                // Feedback visual para unidade sendo invocada
+                if (selectedCard instanceof UnitCard) {
+                    batch.setColor(1, 1, 1, 0.5f);
+                    Texture previewTexture = getUnitTextureForCard((UnitCard) selectedCard);
+                    batch.draw(previewTexture, touchPoint.x - TILE_SIZE/2, touchPoint.y - TILE_SIZE/2,
+                        TILE_SIZE, TILE_SIZE, 0, 0, 200, 200, false, false);
+                } else if (selectedCard instanceof SpellCard) {
+                    batch.setColor(0.5f, 0.5f, 1f, 0.5f);
+                    batch.draw(characterTexture, touchPoint.x - TILE_SIZE/2, touchPoint.y - TILE_SIZE/2, TILE_SIZE, TILE_SIZE);
+                }
                 batch.setColor(Color.WHITE);
             }
             batch.end();
@@ -359,6 +414,17 @@ public class GameScreen implements Screen {
         // Labels globais
         hudStage.act(delta);
         hudStage.draw();
+    }
+
+    private Texture getUnitTextureForCard(UnitCard card) {
+        Texture texture = unitTextures.get(card.name);
+        return texture != null ? texture : defaultUnitTexture;
+    }
+
+    private Texture getUnitTexture(BoardUnit unit) {
+        String unitName = unit.getCardData().name;
+        Texture texture = unitTextures.get(unitName);
+        return texture != null ? texture : defaultUnitTexture;
     }
 
     private void updateHudInfo() {
@@ -407,6 +473,15 @@ public class GameScreen implements Screen {
         if (font != null) font.dispose();
         if (hudFont != null) hudFont.dispose();
         if (cardFont != null) cardFont.dispose();
+        if (unitTextures != null) {
+            for (Texture texture : unitTextures.values()) {
+                if (texture != null) {
+                    texture.dispose();
+                }
+            }
+            unitTextures.clear();
+        }
+        if (defaultUnitTexture != null) defaultUnitTexture.dispose();
     }
 
     @Override public void pause() {}
