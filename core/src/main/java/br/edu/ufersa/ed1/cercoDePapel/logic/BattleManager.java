@@ -7,10 +7,7 @@ import br.edu.ufersa.ed1.cercoDePapel.entities.UnitCard;
 import br.edu.ufersa.ed1.cercoDePapel.util.FileController;
 import br.edu.ufersa.ed1.cercoDePapel.util.MyLinkedList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,7 +109,31 @@ public class BattleManager {
         Card card = playerDeck.draw();
         if (card != null) {
             playerHand.add(card);
+            sortHandByCost();
         }
+    }
+
+    // Usa o insertion sort para ordenar as cartas em ordem crescente de custo
+    public void sortHandByCost(){
+        if(playerHand == null || playerHand.size() <= 1) return;
+
+        Card[] handArray = playerHand.toArray(new Card[0]);
+
+        for (int i = 1; i < handArray.length; i++) {
+            Card key = handArray[i];
+            int j = i - 1;
+
+            // Move elementos maiores que a chave para a direita
+            while (j >= 0 && handArray[j].cost > key.cost) {
+                handArray[j + 1] = handArray[j];
+                j = j - 1;
+            }
+            handArray[j + 1] = key;
+        }
+
+        // Atualiza a lista
+        playerHand.clear();
+        playerHand.addAll(Arrays.asList(handArray));
     }
 
     private void checkWinCondition() {
@@ -246,6 +267,7 @@ public class BattleManager {
         if (success) {
             turnManager.spendMana(card.cost);
             playerHand.remove(card);
+            sortHandByCost();
             return true;
         }
         return false;
@@ -274,6 +296,7 @@ public class BattleManager {
             newUnit.setAttacked(true);
             addUnit(newUnit);
             playerHand.remove(card);
+            sortHandByCost();
             return true;
         }
         return false;
