@@ -6,12 +6,12 @@ import java.util.function.Consumer;
 
 public class MyLinkedHashSet<E> implements Set<E> {
 
-    private static class Node<E> {
+    private static class HashNode<E> {
         E element;
-        Node<E> next;
-        Node<E> before, after;
+        HashNode<E> next;
+        HashNode<E> before, after;
 
-        Node(E element) {
+        HashNode(E element) {
             this.element = element;
         }
     }
@@ -19,13 +19,13 @@ public class MyLinkedHashSet<E> implements Set<E> {
     private static final int DEFAULT_CAPACITY = 16;
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
-    private Node<E>[] table;
+    private HashNode<E>[] table;
     private int size;
     private final float loadFactor;
 
     // Manter a ordem de inserção
-    private Node<E> head;
-    private Node<E> tail;
+    private HashNode<E> head;
+    private HashNode<E> tail;
 
     public MyLinkedHashSet() {
         this(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
@@ -43,7 +43,7 @@ public class MyLinkedHashSet<E> implements Set<E> {
             throw new IllegalArgumentException("Illegal load factor: " + loadFactor);
 
         this.loadFactor = loadFactor;
-        this.table = (Node<E>[]) new Node[initialCapacity];
+        this.table = (HashNode<E>[]) new HashNode[initialCapacity];
         this.size = 0;
     }
 
@@ -67,11 +67,11 @@ public class MyLinkedHashSet<E> implements Set<E> {
         return getNode(o) != null;
     }
 
-    private Node<E> getNode(Object o) {
+    private HashNode<E> getNode(Object o) {
         if (o == null) return null;
 
         int index = getIndex(o);
-        Node<E> node = table[index];
+        HashNode<E> node = table[index];
 
         while (node != null) {
             if (Objects.equals(o, node.element)) {
@@ -88,8 +88,8 @@ public class MyLinkedHashSet<E> implements Set<E> {
     }
 
     private class LinkedHashSetIterator implements Iterator<E> {
-        private Node<E> current = head;
-        private Node<E> lastReturned = null;
+        private HashNode<E> current = head;
+        private HashNode<E> lastReturned = null;
 
         @Override
         public boolean hasNext() {
@@ -159,27 +159,27 @@ public class MyLinkedHashSet<E> implements Set<E> {
         ensureCapacity();
 
         int index = getIndex(e);
-        Node<E> newNode = new Node<>(e);
+        HashNode<E> newHashNode = new HashNode<>(e);
 
         // Adicionar à tabela hash
-        newNode.next = table[index];
-        table[index] = newNode;
+        newHashNode.next = table[index];
+        table[index] = newHashNode;
 
         // Adicionar à lista encadeada para manter ordem
-        linkNodeLast(newNode);
+        linkNodeLast(newHashNode);
 
         size++;
         return true;
     }
 
-    private void linkNodeLast(Node<E> node) {
+    private void linkNodeLast(HashNode<E> hashNode) {
         if (head == null) {
-            head = node;
+            head = hashNode;
         } else {
-            tail.after = node;
-            node.before = tail;
+            tail.after = hashNode;
+            hashNode.before = tail;
         }
-        tail = node;
+        tail = hashNode;
     }
 
     @Override
@@ -187,8 +187,8 @@ public class MyLinkedHashSet<E> implements Set<E> {
         if (o == null) return false;
 
         int index = getIndex(o);
-        Node<E> prev = null;
-        Node<E> current = table[index];
+        HashNode<E> prev = null;
+        HashNode<E> current = table[index];
 
         while (current != null) {
             if (Objects.equals(o, current.element)) {
@@ -212,21 +212,21 @@ public class MyLinkedHashSet<E> implements Set<E> {
         return false;
     }
 
-    private void unlinkNode(Node<E> node) {
-        if (node.before == null) {
-            head = node.after;
+    private void unlinkNode(HashNode<E> hashNode) {
+        if (hashNode.before == null) {
+            head = hashNode.after;
         } else {
-            node.before.after = node.after;
+            hashNode.before.after = hashNode.after;
         }
 
-        if (node.after == null) {
-            tail = node.before;
+        if (hashNode.after == null) {
+            tail = hashNode.before;
         } else {
-            node.after.before = node.before;
+            hashNode.after.before = hashNode.before;
         }
 
-        node.before = null;
-        node.after = null;
+        hashNode.before = null;
+        hashNode.after = null;
     }
 
     @Override
@@ -289,10 +289,10 @@ public class MyLinkedHashSet<E> implements Set<E> {
     private void ensureCapacity() {
         if (size >= table.length * loadFactor) {
             int newCapacity = table.length * 2;
-            Node<E>[] newTable = (Node<E>[]) new Node[newCapacity];
+            HashNode<E>[] newTable = (HashNode<E>[]) new HashNode[newCapacity];
 
             // Rehash todos os elementos
-            Node<E> current = head;
+            HashNode<E> current = head;
             while (current != null) {
                 int newIndex = (current.element.hashCode() & 0x7FFFFFFF) % newCapacity;
                 current.next = newTable[newIndex];
@@ -322,7 +322,7 @@ public class MyLinkedHashSet<E> implements Set<E> {
     @Override
     public void forEach(Consumer<? super E> action) {
         Objects.requireNonNull(action);
-        Node<E> current = head;
+        HashNode<E> current = head;
         while (current != null) {
             action.accept(current.element);
             current = current.after;
