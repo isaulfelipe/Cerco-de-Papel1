@@ -5,22 +5,22 @@ import br.edu.ufersa.ed1.cercoDePapel.entities.UnitCard;
 import br.edu.ufersa.ed1.cercoDePapel.enums.Rarity;
 import br.edu.ufersa.ed1.cercoDePapel.enums.SpellType;
 import br.edu.ufersa.ed1.cercoDePapel.enums.UnitClass;
+import com.badlogic.gdx.Gdx; // IMPORTANTE: Importar Gdx
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class FileController {
+    // Caminhos ajustados para usar Gdx.files.internal (dentro de assets)
     private static final String pathUnits = "files/unidades.csv";
     private static final String pathSpells = "files/magias.csv";
-    private static final String pathMap = "assets/maps/testMap.tmx";
+    private static final String pathMap = "maps/testMap.tmx";
 
-    public static Set<UnitCard> readAllUnits() throws IOException{
+    public static Set<UnitCard> readAllUnits() throws IOException {
         Set<UnitCard> unitSet = new LinkedHashSet<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(pathUnits))) {
+        // CORREÇÃO: Usando Gdx.files.internal para ler de dentro do assets/jar
+        try (BufferedReader reader = new BufferedReader(Gdx.files.internal(pathUnits).reader())) {
             reader.readLine(); // Ignora cabeçalho
 
             String text;
@@ -33,19 +33,18 @@ public class FileController {
                 }
             }
         }
-
         return unitSet;
     }
+
     public static UnitCard readUnit(String text){
         try {
             List<String> components = parseCSVLine(text);
+            // Ajuste de validação se necessário
             if (components.size() < 11) {
-                System.err.println("Linha inválida: " + text);
                 return null;
             }
 
             UnitCard unit = new UnitCard();
-
             unit.setId(components.get(0));
             unit.setRarity(Rarity.valueOf(components.get(1)));
             unit.setName(components.get(2));
@@ -60,17 +59,16 @@ public class FileController {
 
             return unit;
         } catch (Exception e) {
-            System.err.println("Erro ao processar linha: " + text);
-            System.err.println("Erro: " + e.getMessage());
+            System.err.println("Erro ao ler unidade: " + text + " -> " + e.getMessage());
             return null;
         }
     }
 
-    public static Set<SpellCard> readAllSpells() throws IOException{
+    public static Set<SpellCard> readAllSpells() throws IOException {
         Set<SpellCard> spellSet = new LinkedHashSet<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(pathSpells))) {
-            reader.readLine(); // Ignora cabeçalho
+        try (BufferedReader reader = new BufferedReader(Gdx.files.internal(pathSpells).reader())) {
+            reader.readLine();
 
             String text;
             while ((text = reader.readLine()) != null) {
@@ -82,19 +80,15 @@ public class FileController {
                 }
             }
         }
-
         return spellSet;
     }
+
     public static SpellCard readSpell(String text){
         try {
             List<String> components = parseCSVLine(text);
-            if (components.size() < 6) {
-                System.err.println("Linha inválida: " + text);
-                return null;
-            }
+            if (components.size() < 6) return null;
 
             SpellCard spell = new SpellCard();
-
             spell.setId(components.get(0));
             spell.setRarity(Rarity.valueOf(components.get(1)));
             spell.setName(components.get(2));
@@ -104,8 +98,7 @@ public class FileController {
 
             return spell;
         } catch (Exception e) {
-            System.err.println("Erro ao processar linha: " + text);
-            System.err.println("Erro: " + e.getMessage());
+            System.err.println("Erro ao ler magia: " + text);
             return null;
         }
     }
@@ -115,67 +108,29 @@ public class FileController {
         final int columns = 10;
         final int[][] map = new int[rows][columns];
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(pathMap))) {
-            for (int i = 0; i < 5; i++) reader.readLine(); //pula as linhas de xml
+        try (BufferedReader reader = new BufferedReader(Gdx.files.internal(pathMap).reader())) {
+            for (int i = 0; i < 5; i++) reader.readLine();
 
             for (int i = 0; i < rows; i++) {
                 String line = reader.readLine();
-                if(line.endsWith(",")){
+                if(line != null && line.endsWith(",")){
                     line = line.substring(0, line.length() - 1);
                 }
-
-                List<String> tiles = parseCSVLine(line);
-                for (int j = 0; j < columns; j++){
-                    map[i][j] = Integer.parseInt(tiles.get(j));
+                if (line != null) {
+                    List<String> tiles = parseCSVLine(line);
+                    for (int j = 0; j < columns && j < tiles.size(); j++){
+                        map[i][j] = Integer.parseInt(tiles.get(j));
+                    }
                 }
             }
         }
-
         return map;
     }
 
-    public static List<String> readAllLines(String path) throws IOException{
-        List<String> lines = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))){
-            String line;
-            while ((line = reader.readLine()) != null){
-                lines.add(line);
-            }
-        }
-        return lines;
-    }
-
-    public static void writeMap(int[][] newMap) throws IOException{
-        // Verifica se o mapa tem tamanho 7x10
-        if (newMap.length != 7) {
-            return;
-        }
-        for (int[] row : newMap) {
-            if (row == null || row.length != 10) {
-                return;
-            }
-        }
-
-        String tempMapPath = pathMap + ".tmp";
-        List<String> allLines = readAllLines(pathMap);
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempMapPath))){
-            for (int i = 0; i < 15; i++) {
-                if (i < 5 || i >= 12) {
-                    writer.write(allLines.get(i));
-                }
-                else {
-                    writer.write(Arrays.toString(newMap[i - 5])
-                        .replace("[", "")
-                        .replace("]", "")
-                        .replace(" ", "")
-                        + ((i - 5) < 6 ? "," : ""));
-                }
-                writer.write("\n");
-            }
-        }
-
-        Files.move(Path.of(tempMapPath), Path.of(pathMap), StandardCopyOption.REPLACE_EXISTING);
+    // Método para salvar mapa (Atenção: Gdx.files.internal é somente leitura em JARs.
+    // Para salvar, use Gdx.files.local, mas requer mudança de lógica se for rodar compilado)
+    public static void writeMap(int[][] newMap) {
+        System.out.println("A escrita de mapas não é suportada diretamente em assets internos em tempo de execução.");
     }
 
     private static List<String> parseCSVLine(String text){
@@ -185,20 +140,16 @@ public class FileController {
 
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
-
             if (c == '\"') {
                 inQuotes = !inQuotes;
             } else if (c == ',' && !inQuotes) {
                 result.add(field.toString().trim());
-                field.setLength(0); // limpa o StringBuilder
+                field.setLength(0);
             } else {
                 field.append(c);
             }
         }
-
-        // Adiciona o último campo
         result.add(field.toString().trim());
-
         return result;
     }
 }
